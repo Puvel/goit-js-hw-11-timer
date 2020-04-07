@@ -14,15 +14,27 @@ class CountdownTimer {
 
   firstTimer() {
     const difference = this.targetDate.getTime() - Date.now();
+    if (Date.now() >= this.targetDate.getTime()) {
+      this.calculation(0)
+      return
+    }
     this.calculation(difference);
   }
 
   timer() {
-    this.timerId = setInterval(this.firstTimer.bind(this), 1000);
+    this.timerId = setInterval(() => {
+      if (Date.now() >= this.targetDate.getTime()) {
+        clearInterval(this.timerId);
+        return
+      }
+      this.firstTimer();
+    }, 1000);
   }
 
   calculation(difference) {
-    this.days.textContent = Math.floor(difference / (1000 * 60 * 60 * 24));
+    this.days.textContent = this.pad(
+      Math.floor(difference / (1000 * 60 * 60 * 24)),
+    );
     this.hours.textContent = this.pad(
       Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
     );
@@ -41,5 +53,5 @@ class CountdownTimer {
 
 new CountdownTimer({
   selector: '#timer-1',
-  targetDate: new Date('Jul 17, 2020'),
+  targetDate: new Date(2020, 3, 7, 17, 40),
 });
